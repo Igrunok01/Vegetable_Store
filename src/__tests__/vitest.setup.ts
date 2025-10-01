@@ -8,11 +8,13 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
       matches: false,
       media: query,
       onchange: null,
-      addListener() {},          
+      addListener() {},
       removeListener() {},
-      addEventListener() {},     
+      addEventListener() {},
       removeEventListener() {},
-      dispatchEvent() { return false; },
+      dispatchEvent() {
+        return false;
+      },
     }),
   });
 }

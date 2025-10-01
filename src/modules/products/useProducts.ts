@@ -1,34 +1,18 @@
-import { useEffect, useState } from 'react';
-import ky from 'ky';
-import type { Product } from '../../types';
-
-const URL =
-  'https://res.cloudinary.com/sivadass/raw/upload/v1535817394/json/products.json';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { selectError, selectLoading, selectProducts } from './selectors';
+import { fetchProducts } from './productsThunks';
 
 export function useProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const products = useAppSelector(selectProducts);
+  const error = useAppSelector(selectError);
+  const loading = useAppSelector(selectLoading);
 
   useEffect(() => {
-    let isMounted = true;
-    const load = async () => {
-      try {
-        const fetchProducts = await ky
-          .get(URL, { timeout: 5000, retry: { limit: 2 } })
-          .json<Product[]>();
-        if (isMounted) setProducts(fetchProducts);
-      } catch (e) {
-        if (isMounted) setError('Не удалось загрузить продукты');
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    load();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    const p = dispatch(fetchProducts());
+    return () => p.abort();
+  }, [dispatch]);
 
   return { products, loading, error };
 }

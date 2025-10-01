@@ -8,11 +8,13 @@ import {
   Divider,
   Box,
 } from '@mantine/core';
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { QuantityControl } from '../../ui/QuantityControl';
 import { splitName } from '../../utils/splitName';
 import type { CartItem } from '../../types';
-
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { setOpened, toggle } from './cartUiSlice';
+import { selectCartOpened } from './selectors';
 type Props = {
   cart: CartItem[];
   children: ReactNode;
@@ -21,22 +23,30 @@ type Props = {
   total: number;
 };
 
-export default function CartPopup({ cart, children, onInc, onDec, total }: Props) {
-  const [opened, setOpened] = useState(false);
-
+export default function CartPopup({
+  cart,
+  children,
+  onInc,
+  onDec,
+  total,
+}: Props) {
+  const dispatch = useAppDispatch();
+  const opened = useAppSelector(selectCartOpened);
   return (
     <Popover
       opened={opened}
-      onChange={setOpened}
+      onChange={(v) => dispatch(setOpened(v))}
       position="bottom-end"
       trapFocus={false}
       shadow="md"
       radius="lg"
       withArrow
       arrowSize={12}
+      withinPortal={false}                 
+      transitionProps={{ duration: 0 }}
     >
       <Popover.Target>
-        <Box onClick={() => setOpened((v) => !v)} style={{ cursor: 'pointer' }}>
+        <Box onClick={() => dispatch(toggle())} style={{ cursor: 'pointer' }}>
           {children}
         </Box>
       </Popover.Target>

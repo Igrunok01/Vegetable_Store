@@ -11,13 +11,20 @@ import {
 } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { ProductCard } from '../../components/ProductCard';
-import { CartPopup, useCart } from '../../modules/cart';
+import { CartPopup, selectCount, selectTotal } from '../../modules/cart';
 import { useProducts } from '../../modules/products';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { selectCartItems } from '../../modules/cart';
+import { addToCart, inc, dec } from '../../modules/cart';
 
 export default function App() {
   const { products, loading, error } = useProducts();
-  const { cart, addToCart, count, total, inc, dec, getItemQuantity, setItemQuantity } =
-    useCart();
+
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(selectCartItems);
+  const count = useAppSelector(selectCount);
+  const total = useAppSelector(selectTotal);
+
   return (
     <AppShell header={{ height: 64 }} padding="md">
       <AppShell.Header withBorder>
@@ -35,9 +42,9 @@ export default function App() {
               <Text c="dimmed">${total}</Text>
 
               <CartPopup
-                cart={cart}
-                onInc={inc}
-                onDec={dec}
+                cart={cartItems}
+                onInc={(id) => dispatch(inc({ id }))}
+                onDec={(id) => dispatch(dec({ id }))}
                 total={total}
               >
                 <Button
@@ -72,9 +79,9 @@ export default function App() {
                 <ProductCard
                   key={p.id}
                   {...p}
-                  addToCart={(qty) => addToCart(p, qty)}
-                  getItemQuantity={getItemQuantity}
-                  setItemQuantity={setItemQuantity}
+                  addToCart={(qty) =>
+                    dispatch(addToCart({ product: p, quantity: qty }))
+                  }
                 />
               ))}
             </SimpleGrid>

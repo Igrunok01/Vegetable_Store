@@ -31,7 +31,7 @@ export default function QuantityControl({
 
   return (
     <div className={styles.wrap}>
-      <ActionIcon className={styles.btn} aria-label="Minus"  onClick={dec}>
+      <ActionIcon className={styles.btn} aria-label="Minus" onClick={dec}>
         <IconMinus size={14} />
       </ActionIcon>
 
@@ -44,7 +44,7 @@ export default function QuantityControl({
         }}
         min={min}
         hideControls
-        variant="unstyled"                 
+        variant="unstyled"
         readOnly={readOnly}
         classNames={{ input: styles.input }}
         w={24}

@@ -1,10 +1,12 @@
 import { Card, Image, Text, Group, Button, AspectRatio } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { useState } from 'react';
 import styles from './ProductCard.module.css';
 import { QuantityControl } from '../../ui/QuantityControl';
 import { splitName } from '../../utils/splitName';
 import type { Product } from '../../types';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { selectItemQuantity, setItemQuantity } from '../../modules/cart';
+import { setQty, selectQtyUi } from './uiSlice';
 
 export default function ProductCard({
   id,
@@ -12,17 +14,11 @@ export default function ProductCard({
   price,
   image,
   addToCart,
-  getItemQuantity,
-  setItemQuantity,
-}: Product & { addToCart: (quantity: number) => void } & {
-  getItemQuantity: (id: number) => number;
-} & {
-  setItemQuantity: (id: number, quantity: number, product?: Product) => void;
-}) {
-  const [quantity, setQuantity] = useState<number>(1);
+}: Product & { addToCart: (quantity: number) => void }) {
   const { title, meta } = splitName(name);
-  const inCartQty = getItemQuantity(id);
-
+  const dispatch = useAppDispatch();
+  const quantity = useAppSelector(selectQtyUi);
+  const inCartQty = useAppSelector((s) => selectItemQuantity(s, id));
   return (
     <Card
       withBorder
@@ -58,14 +54,10 @@ export default function ProductCard({
           value={inCartQty > 0 ? inCartQty : quantity}
           onChange={(next) => {
             if (inCartQty > 0) {
-              if (next === 0) {
-                setItemQuantity(id, 0);
-                setQuantity(1);
-              } else {
-                setItemQuantity(id, next);
-              }
+              dispatch(setItemQuantity({ id, quantity: next }));
+              if (next === 0) dispatch(setQty(1));
             } else {
-              setQuantity(next);
+              dispatch(setQty(next));
             }
           }}
           min={inCartQty > 0 ? 0 : 1}
@@ -77,7 +69,10 @@ export default function ProductCard({
           color="brand"
           variant="light"
           rightSection={<IconShoppingCart size={16} />}
-          onClick={() => {addToCart(quantity); setQuantity(1)}}
+          onClick={() => {
+            addToCart(quantity);
+            dispatch(setQty(1));
+          }}
           className={styles.addBtn}
         >
           Add to cart
