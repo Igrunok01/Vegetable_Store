@@ -6,7 +6,7 @@ import { splitName } from '../../utils/splitName';
 import type { Product } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { selectItemQuantity, setItemQuantity } from '../../modules/cart';
-import { setQty, selectQtyUi } from './uiSlice';
+import { setQtyFor, resetQty, selectQtyUiFor } from './qtyUiSlice';
 
 export default function ProductCard({
   id,
@@ -17,8 +17,8 @@ export default function ProductCard({
 }: Product & { addToCart: (quantity: number) => void }) {
   const { title, meta } = splitName(name);
   const dispatch = useAppDispatch();
-  const quantity = useAppSelector(selectQtyUi);
   const inCartQty = useAppSelector((s) => selectItemQuantity(s, id));
+  const draftQty = useAppSelector((s) => selectQtyUiFor(s, id));
   return (
     <Card
       withBorder
@@ -51,13 +51,12 @@ export default function ProductCard({
           )}
         </Group>
         <QuantityControl
-          value={inCartQty > 0 ? inCartQty : quantity}
+          value={inCartQty > 0 ? inCartQty : Math.max(1, draftQty || 1)}
           onChange={(next) => {
             if (inCartQty > 0) {
-              dispatch(setItemQuantity({ id, quantity: next }));
-              if (next === 0) dispatch(setQty(1));
+              dispatch(setItemQuantity({ id, quantity: Math.max(0, next) }));
             } else {
-              dispatch(setQty(next));
+              dispatch(setQtyFor({ id, qty: Math.max(1, next || 0) }));
             }
           }}
           min={inCartQty > 0 ? 0 : 1}
@@ -70,8 +69,8 @@ export default function ProductCard({
           variant="light"
           rightSection={<IconShoppingCart size={16} />}
           onClick={() => {
-            addToCart(quantity);
-            dispatch(setQty(1));
+            addToCart(Math.max(1, draftQty || 0));
+            dispatch(resetQty(id));
           }}
           className={styles.addBtn}
         >

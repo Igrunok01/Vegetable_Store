@@ -1,7 +1,4 @@
-import {
-  MantineProvider,
-  createTheme,
-} from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import {
   render,
   screen,
@@ -17,7 +14,7 @@ import { expect } from 'vitest';
 
 import { cartReducer, cartUiReducer } from '../modules/cart';
 import { productsReducer } from '../modules/products';
-import qtyUiReducer from '../components/ProductCard/uiSlice';
+import { qtyUiReducer } from '../components/ProductCard';
 
 const testTheme = createTheme({
   components: {

@@ -42,7 +42,7 @@ export default function CartPopup({
       radius="lg"
       withArrow
       arrowSize={12}
-      withinPortal={false}                 
+      withinPortal={false}
       transitionProps={{ duration: 0 }}
     >
       <Popover.Target>
