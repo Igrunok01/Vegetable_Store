@@ -10,11 +10,8 @@ const cartUiSlice = createSlice({
     setOpened(state, action: PayloadAction<boolean>) {
       state.opened = action.payload;
     },
-    toggle(state) {
-      state.opened = !state.opened;
-    },
   },
 });
 
-export const { setOpened, toggle } = cartUiSlice.actions;
+export const { setOpened } = cartUiSlice.actions;
 export default cartUiSlice.reducer;

@@ -18,7 +18,7 @@ import { selectCartItems } from '../../modules/cart';
 import { addToCart, inc, dec } from '../../modules/cart';
 
 export default function App() {
-  const { products, loading, error } = useProducts();
+  const { products, status, error } = useProducts();
 
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(selectCartItems);
@@ -65,13 +65,13 @@ export default function App() {
             Catalog
           </Title>
 
-          {loading ? (
+          {status === 'idle' || status === 'loading' ? (
             <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} height={280} radius="lg" />
               ))}
             </SimpleGrid>
-          ) : error ? (
+          ) : status === 'failed' ? (
             <Text c="red">{error}</Text>
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">

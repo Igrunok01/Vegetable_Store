@@ -4,14 +4,14 @@ import type { Product } from '../../types';
 
 type ProductState = {
   items: Product[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  loading: boolean;
 };
 
 const initialState: ProductState = {
   items: [],
+  status: 'idle',
   error: null,
-  loading: false,
 };
 
 const productsSlice = createSlice({
@@ -21,15 +21,15 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
-        state.loading = true;
+        state.status = 'loading';
         state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.loading = false;
+        state.status = 'succeeded';
         state.items = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
-        state.loading = false;
+        state.status = 'failed';
         if (action.meta.aborted || action.error?.name === 'AbortError') {
           return;
         }

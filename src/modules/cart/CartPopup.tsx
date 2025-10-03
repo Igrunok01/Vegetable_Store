@@ -13,7 +13,7 @@ import { QuantityControl } from '../../ui/QuantityControl';
 import { splitName } from '../../utils/splitName';
 import type { CartItem } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { setOpened, toggle } from './cartUiSlice';
+import { setOpened } from './cartUiSlice';
 import { selectCartOpened } from './selectors';
 type Props = {
   cart: CartItem[];
@@ -46,7 +46,7 @@ export default function CartPopup({
       transitionProps={{ duration: 0 }}
     >
       <Popover.Target>
-        <Box onClick={() => dispatch(toggle())} style={{ cursor: 'pointer' }}>
+        <Box onClick={() => dispatch(setOpened(!opened))} style={{ cursor: 'pointer' }}>
           {children}
         </Box>
       </Popover.Target>
